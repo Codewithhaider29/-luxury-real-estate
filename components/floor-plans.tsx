@@ -1,202 +1,159 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Maximize, BedDouble, Bath, Car } from "lucide-react"
 
-interface FloorPlan {
-  id: number
-  name: string
-  area: string
-  beds: number
-  baths: number
-  parking: number
-  image: string
-}
-
-const floorPlans: FloorPlan[] = [
+// 1. DATA: Defined the floor plan types
+const floorPlans = [
   {
     id: 1,
     name: "Studio",
-    area: "450 sqft",
-    beds: 0,
-    baths: 1,
-    parking: 1,
-    image: "/floor-plan-studio.jpg",
+    specs: { area: "450 sqf", beds: "01", baths: "01", parking: "01" }
   },
   {
     id: 2,
-    name: "One Bedroom",
-    area: "750 sqft",
-    beds: 1,
-    baths: 1,
-    parking: 1,
-    image: "/floor-plan-1bed.jpg",
+    name: "Simplex",
+    specs: { area: "750 sqf", beds: "02", baths: "01", parking: "01" }
   },
   {
     id: 3,
-    name: "Two Bedroom",
-    area: "1200 sqft",
-    beds: 2,
-    baths: 2,
-    parking: 2,
-    image: "/floor-plan-2bed.jpg",
+    name: "Duplex",
+    specs: { area: "1200 sqf", beds: "03", baths: "02", parking: "02" }
   },
   {
     id: 4,
+    name: "Double height",
+    specs: { area: "1600 sqf", beds: "03", baths: "03", parking: "02" }
+  },
+  {
+    id: 5,
     name: "Penthouse",
-    area: "3500 sqft",
-    beds: 4,
-    baths: 4,
-    parking: 3,
-    image: "/floor-plan-penthouse.jpg",
+    specs: { area: "3500 sqf", beds: "05", baths: "04", parking: "03" }
   },
 ]
 
 export default function FloorPlans() {
-  const [activeId, setActiveId] = useState<number>(2)
-  const ref = useRef<HTMLDivElement>(null)
+  const [activeId, setActiveId] = useState(1)
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          ref.current?.classList.add("animate-in")
-        }
-      },
-      { threshold: 0.1 },
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
-
-  const activePlan = floorPlans.find((p) => p.id === activeId)
+  // Find active data to display
+  const activePlan = floorPlans.find((p) => p.id === activeId) || floorPlans[0]
 
   return (
-    <section
-      ref={ref}
-      className="bg-[#0B0B0B] py-20 px-6 opacity-0 animate-in"
-      style={{
-        backgroundImage:
-          "url('data:image/svg+xml,%3Csvg width=%22100%22 height=%22100%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2230%22 fill=%22none%22 stroke=%22%23222%22 strokeWidth=%221%22/%3E%3C/svg%3E')",
-      }}
-    >
+    <section className="bg-white py-24 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-16">
-          <h2 className="text-5xl font-light text-white mb-4 text-balance">Floor Plans</h2>
-          <p className="text-[#AAA] font-light">Choose from our selection of thoughtfully designed layouts</p>
+        
+        {/* Header */}
+        <div className="mb-16 max-w-lg">
+          <h2 className="text-4xl md:text-5xl font-light text-[#1A1A1A] mb-6">
+            Apartment types
+          </h2>
+          <p className="text-[#666] leading-relaxed">
+            Choose from a variety of apartment types, each crafted to suit diverse lifestyles and needs.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-stretch">
-          {/* Plan selector */}
-          <div className="space-y-3">
-            {floorPlans.map((plan, index) => (
+        {/* --- MAIN GRID LAYOUT --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          
+          {/* 1. LEFT COLUMN: Tabs Selection */}
+          <div className="lg:col-span-3 flex flex-col space-y-0 border-l-2 border-[#E5E5E5]">
+            {floorPlans.map((plan) => (
               <button
                 key={plan.id}
                 onClick={() => setActiveId(plan.id)}
-                className={`w-full text-left p-6 rounded-lg transition-all duration-300 border ${
-                  activeId === plan.id
-                    ? "bg-[#111] border-[#C19B76]"
-                    : "bg-transparent border-[#222] hover:border-[#333]"
+                className={`relative pl-6 py-4 text-left text-lg font-medium transition-colors duration-300 focus:outline-none ${
+                  activeId === plan.id 
+                    ? "text-[#1A1A1A]" 
+                    : "text-[#999] hover:text-[#666]"
                 }`}
-                style={{
-                  animation: `slideIn 0.5s ease-out ${index * 50}ms forwards`,
-                  opacity: 0,
-                }}
               >
-                <h3
-                  className={`font-light text-xl mb-4 transition-colors duration-300 ${
-                    activeId === plan.id ? "text-white" : "text-[#CCC]"
-                  }`}
-                >
-                  {plan.name}
-                </h3>
-                <div className="space-y-2 text-sm font-light">
-                  <p
-                    className={`transition-colors duration-300 ${
-                      activeId === plan.id ? "text-[#C19B76]" : "text-[#666]"
-                    }`}
-                  >
-                    {plan.area}
-                  </p>
-                  <p
-                    className={`transition-colors duration-300 ${activeId === plan.id ? "text-[#AAA]" : "text-[#666]"}`}
-                  >
-                    {plan.beds > 0 ? `${plan.beds} Bedroom${plan.beds > 1 ? "s" : ""}` : "Studio"} • {plan.baths} Bath
-                    {plan.baths > 1 ? "s" : ""}
-                  </p>
-                </div>
+                {/* Active Indicator Line */}
+                {activeId === plan.id && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute left-[-2px] top-0 bottom-0 w-[2px] bg-[#1A1A1A]"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+                {plan.name}
               </button>
             ))}
           </div>
 
-          {/* Floor plan image and specs */}
-          <div className="lg:col-span-2">
-            {activePlan && (
-              <div className="space-y-8">
-                {/* Floor plan image */}
-                <div className="relative h-96 rounded-lg overflow-hidden border border-[#222]">
-                  <img
-                    src={activePlan.image || "/placeholder.svg"}
-                    alt={activePlan.name}
-                    className="w-full h-full object-cover"
-                  />
+          {/* 2. CENTER COLUMN: Floor Plan Image */}
+          <div className="lg:col-span-6 flex justify-center py-8 lg:py-0">
+            <div className="relative w-full max-w-md aspect-[3/4]">
+                 {/* Using AnimatePresence to crossfade between identical images 
+                     (gives the feeling of data changing even if image is same)
+                 */}
+                 <AnimatePresence mode="wait">
+                    <motion.img 
+                        key={activeId} // Re-trigger animation on tab change
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.05 }}
+                        transition={{ duration: 0.4 }}
+                        src="/floor-plan-studio.webp"  // Locked to single image as requested
+                        alt="Floor Plan Blueprint"
+                        className="w-full h-full object-contain grayscale contrast-125" 
+                        // Added grayscale/contrast to make it look like a technical drawing
+                    />
+                 </AnimatePresence>
+            </div>
+          </div>
+
+          {/* 3. RIGHT COLUMN: Specifications List */}
+          <div className="lg:col-span-3">
+             <div className="space-y-0">
+                
+                {/* Spec Item: Area */}
+                <div className="flex items-center justify-between py-4 border-b border-[#E5E5E5]">
+                    <div className="flex items-center gap-3 text-[#666]">
+                        <Maximize strokeWidth={1.5} className="w-5 h-5" />
+                        <span className="font-light">Area</span>
+                    </div>
+                    <span className="font-medium text-[#1A1A1A]">{activePlan.specs.area}</span>
                 </div>
 
-                {/* Specifications */}
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="p-4 bg-[#111] rounded-lg border border-[#222]">
-                    <p className="text-[#666] text-xs font-light mb-2">AREA</p>
-                    <p className="text-white font-light text-lg">{activePlan.area}</p>
-                  </div>
-                  <div className="p-4 bg-[#111] rounded-lg border border-[#222]">
-                    <p className="text-[#666] text-xs font-light mb-2">BEDROOMS</p>
-                    <p className="text-white font-light text-lg">{activePlan.beds || "Studio"}</p>
-                  </div>
-                  <div className="p-4 bg-[#111] rounded-lg border border-[#222]">
-                    <p className="text-[#666] text-xs font-light mb-2">BATHROOMS</p>
-                    <p className="text-white font-light text-lg">{activePlan.baths}</p>
-                  </div>
-                  <div className="p-4 bg-[#111] rounded-lg border border-[#222]">
-                    <p className="text-[#666] text-xs font-light mb-2">PARKING</p>
-                    <p className="text-white font-light text-lg">{activePlan.parking}</p>
-                  </div>
+                {/* Spec Item: Bedroom */}
+                <div className="flex items-center justify-between py-4 border-b border-[#E5E5E5]">
+                    <div className="flex items-center gap-3 text-[#666]">
+                        <BedDouble strokeWidth={1.5} className="w-5 h-5" />
+                        <span className="font-light">Bedroom</span>
+                    </div>
+                    <span className="font-medium text-[#1A1A1A]">{activePlan.specs.beds}</span>
                 </div>
-              </div>
-            )}
+
+                {/* Spec Item: Bathroom */}
+                <div className="flex items-center justify-between py-4 border-b border-[#E5E5E5]">
+                    <div className="flex items-center gap-3 text-[#666]">
+                        <Bath strokeWidth={1.5} className="w-5 h-5" />
+                        <span className="font-light">Bathroom</span>
+                    </div>
+                    <span className="font-medium text-[#1A1A1A]">{activePlan.specs.baths}</span>
+                </div>
+
+                {/* Spec Item: Parking */}
+                <div className="flex items-center justify-between py-4 border-b border-[#E5E5E5]">
+                    <div className="flex items-center gap-3 text-[#666]">
+                        <Car strokeWidth={1.5} className="w-5 h-5" />
+                        <span className="font-light">Parking</span>
+                    </div>
+                    <span className="font-medium text-[#1A1A1A]">{activePlan.specs.parking}</span>
+                </div>
+
+             </div>
+
+             <div className="mt-8">
+                 <p className="text-[#888] text-sm leading-relaxed">
+                     Each apartment combines smart design and modern style, ensuring comfort and convenience every day.
+                 </p>
+             </div>
           </div>
+
         </div>
       </div>
-
-      <style>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-in {
-          animation: fadeInUp 0.8s ease-out forwards;
-        }
-      `}</style>
     </section>
   )
 }

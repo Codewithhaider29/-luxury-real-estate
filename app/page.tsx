@@ -6,17 +6,14 @@ import Header from "@/components/header"
 import Hero from "@/components/hero"
 import Statistics from "@/components/statistics"
 import AboutParallax from "@/components/about-parallax"
-import FeaturesGrid from "@/components/features-grid"
-import ParallaxBuilding from "@/components/parallax-building"
 import GalleryGrid from "@/components/gallery-grid"
 import ListingsTable from "@/components/listings-table"
-import CTASection from "@/components/cta-section"
-import Neighborhood from "@/components/neighborhood"
+import Features from "@/components/features-section"
 import FloorPlans from "@/components/floor-plans"
-import BlogSection from "@/components/blog-section"
 import Partners from "@/components/partners"
 import UpcomingProjects from "@/components/upcoming-projects"
 import Testimonials from "@/components/testimonials"
+import ContactSection from "@/components/contact-section"
 import Footer from "@/components/footer"
 
 export default function Home() {
@@ -39,24 +36,20 @@ export default function Home() {
         <Hero />
       </div>
       <Statistics />
-      <ParallaxBuilding />
       <div id="about">
         <AboutParallax />
       </div>
-      <FeaturesGrid />
       <GalleryGrid />
       <ListingsTable />
-      <CTASection />
+      <Features />
       <div id="properties">
-        <Neighborhood />
         <FloorPlans />
       </div>
-      <div id="blog">
-        <BlogSection />
-      </div>
+      
       <Partners />
       <UpcomingProjects />
       <Testimonials />
+      <ContactSection />
       <Footer />
     </main>
   )

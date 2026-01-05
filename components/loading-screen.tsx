@@ -1,70 +1,139 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function LoadingScreen() {
   const [progress, setProgress] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval)
+          // Hold the 100% state briefly for visual satisfaction
+          setTimeout(() => setIsComplete(true), 800) 
           return 100
         }
-        return prev + Math.random() * 30
+        // Simulated organic loading speeds
+        const increment = prev > 80 ? Math.random() * 2 : Math.random() * 20
+        return prev + increment
       })
-    }, 200)
+    }, 120)
 
     return () => clearInterval(interval)
   }, [])
 
+  const brandName = "BRICKSIO"
+
   return (
-    <div className="fixed inset-0 bg-[#0B0B0B] z-50 flex items-center justify-center overflow-hidden">
-      {/* Curtain overlay effect */}
-      <div className="absolute inset-0 flex">
-        <div className="w-1/2 h-full bg-[#0B0B0B] transform origin-left"></div>
-        <div className="w-1/2 h-full bg-[#0B0B0B] transform origin-right"></div>
-      </div>
+    <AnimatePresence>
+      {!isComplete && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1, ease: [0.7, 0, 0.3, 1], delay: 1 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-white"
+        >
+          {/* Dual Curtain Reveal - Gold & White Layers */}
+          <div className="absolute inset-0 flex">
+            <motion.div
+              initial={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ duration: 1.2, ease: [0.87, 0, 0.13, 1], delay: 0.6 }}
+              className="w-1/2 h-full bg-[#0B0B0B] z-20"
+            />
+            <motion.div
+              initial={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 1.2, ease: [0.87, 0, 0.13, 1], delay: 0.6 }}
+              className="w-1/2 h-full bg-[#0B0B0B] z-20"
+            />
+          </div>
 
-      {/* Loading content */}
-      <div className="relative z-10 flex flex-col items-center justify-center gap-8">
-        {/* Logo pulse */}
-        <div className="relative w-20 h-20">
-          <div
-            className="absolute inset-0 rounded-full border-2 border-[#C19B76]"
-            style={{
-              animation: "pulse 2s ease-in-out infinite",
-            }}
-          ></div>
-          <div className="absolute inset-0 flex items-center justify-center text-[#C19B76] text-2xl font-bold">◆</div>
-        </div>
+          {/* Centered Loading Content */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+            transition={{ duration: 0.8 }}
+            className="relative z-30 flex flex-col items-center gap-12"
+          >
+            {/* Logo Container */}
+            <div className="relative group">
+              {/* Spinning Aura */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                className="absolute -inset-8 border border-dashed border-[#C19B76]/20 rounded-full"
+              />
+              
+              {/* Pulsing Outer Ring */}
+              <motion.div
+                animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -inset-4 border-2 border-[#C19B76] rounded-full"
+              />
 
-        {/* Loading text */}
-        <p className="text-white text-sm font-light tracking-widest">BRICKSIO</p>
+              {/* Your Logo */}
+              <div className="relative w-24 h-24 flex items-center justify-center p-4 bg-[#0B0B0B] rounded-full">
+                <img 
+                  src="/logo.svg" 
+                  alt="Bricksio Logo" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </div>
 
-        {/* Progress bar */}
-        <div className="w-48 h-px bg-[#333] relative overflow-hidden">
-          <div
-            className="h-full bg-[#C19B76] transition-all duration-300"
-            style={{ width: `${Math.min(progress, 100)}%` }}
-          ></div>
-        </div>
+            <div className="flex flex-col items-center gap-6">
+              {/* Staggered Brand Text Reveal */}
+              <div className="flex overflow-hidden">
+                {brandName.split("").map((char, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    transition={{ 
+                      delay: i * 0.1, 
+                      duration: 0.5, 
+                      ease: [0.16, 1, 0.3, 1] 
+                    }}
+                    className="text-white text-xl font-light tracking-[0.4em] inline-block"
+                  >
+                    {char}
+                  </motion.span>
+                ))}
+              </div>
 
-        {/* Progress text */}
-        <p className="text-[#999] text-xs">{Math.floor(Math.min(progress, 100))}%</p>
-      </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.3;
-          }
-        }
-      `}</style>
-    </div>
+              {/* Minimalist Progress Indicator */}
+              <div className="w-48 space-y-4">
+                <div className="h-[2px] w-full bg-white/5 relative rounded-full overflow-hidden">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 bg-[#C19B76] shadow-[0_0_10px_#C19B76]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ type: "spring", damping: 20, stiffness: 40 }}
+                  />
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <motion.span 
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-[9px] text-[#C19B76] font-bold uppercase tracking-[0.2em]"
+                  >
+                    Initialising
+                  </motion.span>
+                  <span className="text-[10px] text-white/40 font-mono tabular-nums">
+                    {Math.floor(progress)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

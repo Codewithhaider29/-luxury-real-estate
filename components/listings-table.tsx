@@ -1,114 +1,159 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { motion, Variants } from "framer-motion"
+import { ArrowUpRight, BedDouble, Bath, Car, Maximize, ArrowRight } from "lucide-react"
 
 interface Property {
   id: number
   name: string
-  sqft: string
+  sqft: number
   beds: number
   baths: number
+  parking: number
   price: string
 }
 
 const properties: Property[] = [
-  { id: 1, name: "Tower One - 219A", sqft: "1,600 sqft", beds: 3, baths: 2, price: "$1,258,000" },
-  { id: 2, name: "Tower One - 405B", sqft: "2,200 sqft", beds: 4, baths: 3, price: "$1,895,000" },
-  { id: 3, name: "Tower Two - 1012", sqft: "1,950 sqft", beds: 3, baths: 2.5, price: "$1,575,000" },
-  { id: 4, name: "Penthouse Suite - 2401", sqft: "3,500 sqft", beds: 4, baths: 4, price: "$3,450,000" },
-  { id: 5, name: "Tower Three - 805C", sqft: "1,750 sqft", beds: 3, baths: 2, price: "$1,395,000" },
+  { id: 1, name: "Tower One 219A", sqft: 1600, beds: 3, baths: 2, parking: 1, price: "$25,800.00" },
+  { id: 2, name: "Tower One 602A", sqft: 695, beds: 2, baths: 1, parking: 0, price: "$9,500.00" },
+  { id: 3, name: "Tower Three 911D", sqft: 795, beds: 2, baths: 2, parking: 0, price: "$800.00" },
+  { id: 4, name: "Tower Seven 503F", sqft: 1230, beds: 3, baths: 2, parking: 1, price: "$12,800.00" },
+  { id: 5, name: "Tower Seven 803G", sqft: 2200, beds: 4, baths: 2, parking: 2, price: "$37,900.00" },
+  { id: 6, name: "Tower Eight 209C", sqft: 1600, beds: 2, baths: 2, parking: 1, price: "$19,800.00" },
 ]
 
-export default function ListingsTable() {
-  const [hoveredId, setHoveredId] = useState<number | null>(null)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          ref.current?.classList.add("animate-in")
-        }
-      },
-      { threshold: 0.1 },
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
     }
+  }
+}
 
-    return () => observer.disconnect()
-  }, [])
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" }
+  }
+}
 
+export default function ListingsTable() {
   return (
-    <section ref={ref} className="bg-[#0B0B0B] py-20 px-6 opacity-0 animate-in">
+    <section className="bg-white py-24 px-6 border-t border-[#F0F0F0]">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-16">
-          <h2 className="text-5xl font-light text-white mb-4 text-balance">Apartment Listings</h2>
-          <p className="text-[#AAA] font-light">Browse our available properties and contact us for more information</p>
-        </div>
+        
+        {/* Header Section */}
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-20 space-y-4"
+        >
+          <div className="inline-block w-12 h-[2px] bg-[#C19B76] mb-4" />
+          <h2 className="text-4xl md:text-5xl font-light text-[#1a1a1a] tracking-tight">
+            Available apartments ready for you
+          </h2>
+          <p className="text-[#666] font-light max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+            Move into thoughtfully designed apartments offering comfort, style, and convenience. Each space is crafted to suit your lifestyle.
+          </p>
+        </motion.div>
 
-        <div className="overflow-x-auto rounded-lg border border-[#222]">
-          <table className="w-full text-left">
-            <thead className="border-b border-[#222] bg-[#111]">
-              <tr>
-                <th className="px-6 py-4 text-white font-light text-sm">Property Name</th>
-                <th className="px-6 py-4 text-white font-light text-sm">Size</th>
-                <th className="px-6 py-4 text-white font-light text-sm">Beds / Baths</th>
-                <th className="px-6 py-4 text-white font-light text-sm">Price</th>
-                <th className="px-6 py-4 text-white font-light text-sm">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {properties.map((property) => (
-                <tr
-                  key={property.id}
-                  onMouseEnter={() => setHoveredId(property.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className={`border-b border-[#222] transition-all duration-300 ${
-                    hoveredId === property.id ? "bg-[#111]" : "bg-transparent hover:bg-[#0D0D0D]"
-                  }`}
+        {/* Listings Table */}
+        <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="space-y-0"
+        >
+            {/* Table Header (Hidden on Mobile) */}
+            <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-[#E5E5E5] text-xs font-bold tracking-[0.15em] text-[#999] uppercase px-6">
+                <div className="col-span-3">Property Name</div>
+                <div className="col-span-5 text-center">Specifications</div>
+                <div className="col-span-2 text-right">Price</div>
+                <div className="col-span-2 text-right">Action</div>
+            </div>
+
+            {/* Data Rows */}
+            {properties.map((property) => (
+                <motion.div 
+                    key={property.id}
+                    variants={itemVariants}
+                    className="group relative grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-4 items-center py-8 md:py-6 border-b border-[#F0F0F0] hover:bg-[#FAFAFA] transition-colors duration-300 px-2 md:px-6 cursor-pointer"
                 >
-                  <td className="px-6 py-4 text-white font-light">{property.name}</td>
-                  <td className="px-6 py-4 text-[#AAA] font-light">{property.sqft}</td>
-                  <td className="px-6 py-4 text-[#AAA] font-light">
-                    {property.beds} BD / {property.baths} BA
-                  </td>
-                  <td className="px-6 py-4 text-[#C19B76] font-light">{property.price}</td>
-                  <td className="px-6 py-4">
-                    <button
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                        hoveredId === property.id
-                          ? "bg-[#C19B76] text-white"
-                          : "bg-[#222] text-[#C19B76] hover:bg-[#333]"
-                      }`}
-                    >
-                      Contact
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    {/* Name */}
+                    <div className="col-span-12 md:col-span-3">
+                        <h3 className="text-[#1a1a1a] text-lg font-normal group-hover:text-[#C19B76] transition-colors duration-300">
+                            {property.name}
+                        </h3>
+                    </div>
+
+                    {/* Specifications */}
+                    <div className="col-span-12 md:col-span-5 flex flex-wrap items-center md:justify-center gap-6 md:gap-10 text-[#888]">
+                        
+                        <div className="flex items-center gap-2 group/icon" title="Area">
+                            <Maximize className="w-4 h-4 text-[#CCC] group-hover:text-[#C19B76] transition-colors duration-300" />
+                            <span className="text-sm font-light text-[#555] group-hover:text-[#1a1a1a] transition-colors">{property.sqft} sqf</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 group/icon" title="Bedrooms">
+                            <BedDouble className="w-4 h-4 text-[#CCC] group-hover:text-[#C19B76] transition-colors duration-300" />
+                            <span className="text-sm font-light text-[#555] group-hover:text-[#1a1a1a] transition-colors">{property.beds}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 group/icon" title="Bathrooms">
+                            <Bath className="w-4 h-4 text-[#CCC] group-hover:text-[#C19B76] transition-colors duration-300" />
+                            <span className="text-sm font-light text-[#555] group-hover:text-[#1a1a1a] transition-colors">{property.baths}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 group/icon" title="Parking">
+                            <Car className="w-4 h-4 text-[#CCC] group-hover:text-[#C19B76] transition-colors duration-300" />
+                            <span className="text-sm font-light text-[#555] group-hover:text-[#1a1a1a] transition-colors">{property.parking}</span>
+                        </div>
+
+                    </div>
+
+                    {/* Price */}
+                    <div className="col-span-6 md:col-span-2 md:text-right">
+                        <span className="text-[#1a1a1a] text-lg font-medium tracking-wide">
+                            {property.price}
+                        </span>
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="col-span-6 md:col-span-2 flex justify-end">
+                        <motion.button 
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="flex items-center gap-2 px-6 py-2.5 rounded-sm bg-white border border-[#E5E5E5] text-[#1a1a1a] text-xs font-bold uppercase tracking-wider hover:bg-[#1a1a1a] hover:border-[#1a1a1a] hover:text-white transition-all duration-300"
+                        >
+                            Details
+                            <ArrowUpRight className="w-3 h-3 text-[#C19B76] group-hover:text-white transition-colors" />
+                        </motion.button>
+                    </div>
+                </motion.div>
+            ))}
+        </motion.div>
+
+        {/* Bottom CTA */}
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-20 flex justify-center"
+        >
+            <button className="flex items-center gap-3 px-8 py-4 bg-[#C19B76] text-white rounded-sm hover:bg-[#1a1a1a] transition-all duration-300 font-bold text-xs uppercase tracking-widest group shadow-xl shadow-[#C19B76]/20 hover:shadow-none">
+              View Full Inventory
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+        </motion.div>
+
       </div>
-
-      <style>{`
-        @keyframes slideInUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-in {
-          animation: slideInUp 0.8s ease-out forwards;
-        }
-      `}</style>
     </section>
   )
 }

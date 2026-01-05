@@ -10,19 +10,11 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Bricksio - Luxury Real Estate",
   description: "Discover refined living in stylish contemporary residences",
-  generator: "v0.app",
+
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
+        url: "/logo.svg",
         type: "image/svg+xml",
       },
     ],
@@ -37,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased bg-[#0B0B0B] text-white`}>
+      <body className="font-sans antialiased bg-[#0B0B0B] text-white">
         {children}
         <Analytics />
       </body>
